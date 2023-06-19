@@ -32,24 +32,34 @@ def get_weather(base_date: str, base_time: str, nx: str, ny: str, fcst_date: str
     res = requests.get(URL, params=params)
     res.raise_for_status()
 
-    print(res.content)
-
     item_record_list = OpenapiJsonParser(res.content).parse()
-    print(item_record_list)
     target_record_list = [i for i in item_record_list if i["fcstTime"] == fcst_time and i["fcstDate"] == fcst_date]
     
     return target_record_list
+
+class CannotParseWeatherException(Exception):
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        return "Cannot Parse Weather"
 
 class ParsedWeather:
     SKY_CODE = {"1" : "맑음", "3" : "구름많음", "4" : "흐림"}
     PRECIPITATION_CODE = {"0" : "없음", "1" : "비", "2" : "비/눈", "3" : "눈", "4" : "소나기"}
     def __init__(self, weather_data: dict):
+        self.reset(weather_data=weather_data)
+
+    def reset(self, weather_data):
+        if (len(weather_data) < 1):
+            raise CannotParseWeatherException
+
         self.base_date = weather_data[0]["baseDate"]
         self.base_time = weather_data[0]["baseTime"]
         self.fcst_date = weather_data[0]["fcstDate"]
         self.fcst_time = weather_data[0]["fcstTime"]
         self.weather_dict = self.parse_data(weather_data)
-        print(self.weather_dict)
+
 
         self.temperature = self.weather_dict["TMP"]  # 1시간 기온 - 섭씨
         self.wind_speed_ew = self.weather_dict["UUU"]  # 풍속(동서성분) - m/s

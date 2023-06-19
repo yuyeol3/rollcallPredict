@@ -37,22 +37,21 @@ class HolidayChecker:
      
 
         items = OpenapiJsonParser(res.content).parse()
-        
-
         items_dict = dict([(str(i["locdate"]), i["dateName"]) for i in items])        
         return items_dict
         
 
 class RollCallPredictor:
-    def __init__(self, base_date, target_date):
+    def __init__(self, base_date, base_hour, target_date):
         self.base_date = base_date
+        self.base_hour = base_hour
         self.target_date = target_date
         self.is_holiday = HolidayChecker(year=int(target_date[:4]),
                                          month=int(target_date[4:6]),
                                          day=int(target_date[6:])).chk_holiday()
 
     def predict(self):
-        self.parsed_weather = ParsedWeather(get_weather(self.base_date, "1400",
+        self.parsed_weather = ParsedWeather(get_weather(self.base_date, self.base_hour,
                                                         "96", "76",
                                                         self.target_date, "0600"))
         self.is_inside_rollcall = self._chk_inside_rollcall(self.parsed_weather)
@@ -70,5 +69,4 @@ class RollCallPredictor:
         
 
 if __name__ == "__main__":
-    pass
-    
+    print(RollCallPredictor("20230619", "1700", "20230620").predict())
