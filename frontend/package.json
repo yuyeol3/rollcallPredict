@@ -1,0 +1,12 @@
+{
+  "name": "rollcall_predict_frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "browserify index.js -o ../backend/static/js/index.js && cd ../backend && python main.py",
+    "build": "browserify index.js -o ../backend/static/js/index.js"
+  },
+  "author": "yuyeol3",
+  "license": "ISC"
+}

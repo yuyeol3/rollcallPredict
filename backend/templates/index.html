@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <title>내일점호</title>
 </head>
 <body>
-    Hello World!
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <top-bar></top-bar>
+    <weather-displayer></weather-displayer>
 </body>
 </html>

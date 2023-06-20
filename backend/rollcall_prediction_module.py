@@ -3,9 +3,10 @@ import requests
 import json
 from weather_module import *
 from openapi_json_parser import OpenapiJsonParser
+import consts
 
 class HolidayChecker:
-    API_KEY = "DZUIFVa8jSOQwFqdDguTg7YNvaQvshjE0M+YdZ2wppO3OYJSBJZCLOt5FHdW3+4Qdi1F8QCx33vrNHibVfTb9g=="
+    API_KEY = consts.API_KEY
     URL = "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"
     def __init__(self, year: int, month: int, day: int):
         self.year = year
@@ -52,7 +53,7 @@ class RollCallPredictor:
 
     def predict(self):
         self.parsed_weather = ParsedWeather(get_weather(self.base_date, self.base_hour,
-                                                        "96", "76",
+                                                        consts.NX, consts.NY,
                                                         self.target_date, "0600"))
         self.is_inside_rollcall = self._chk_inside_rollcall(self.parsed_weather)
 

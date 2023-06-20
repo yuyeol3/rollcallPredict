@@ -1,8 +1,9 @@
 import requests
 import json
 from openapi_json_parser import OpenapiJsonParser
+import consts
 
-API_KEY = "DZUIFVa8jSOQwFqdDguTg7YNvaQvshjE0M+YdZ2wppO3OYJSBJZCLOt5FHdW3+4Qdi1F8QCx33vrNHibVfTb9g=="
+API_KEY = consts.API_KEY
 URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
 
 def get_weather(base_date: str, base_time: str, nx: str, ny: str, fcst_date: str, fcst_time: str) -> list[dict]:

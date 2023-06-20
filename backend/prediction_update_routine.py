@@ -10,9 +10,12 @@ class PredictionUpdateRoutine:
     def __init__(self, data_save_addr) -> None:
         self.data_save_addr = data_save_addr
 
-    def run(self):
+    def start(self):
         self.thrd = Thread(target=self._task)
-        # self.thrd.daemon = False
+        # daemon thread로 설정
+        # daemon thread란? 메인 쓰레드를 보조하는 쓰레드
+        # 메인 쓰레드가 종료시 같이 종료됨
+        self.thrd.daemon = True
         self.thrd.start()
 
     def _task(self):
@@ -23,6 +26,7 @@ class PredictionUpdateRoutine:
                 (prev_updated_hour != now.hour)):
                 prev_updated_hour = now.hour
                 self._update_prediction(now, prev_updated_hour)
+
             sleep(10)
 
     def _update_prediction(self, now, prev_updated_hour):
@@ -38,7 +42,6 @@ class PredictionUpdateRoutine:
 
             else:
                 self.data_save_addr[0] = res
-                print(self.data_save_addr[0].is_inside_rollcall)
                 print("업데이트 성공")
                 return
 
