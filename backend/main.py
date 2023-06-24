@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from prediction_update_routine import PredictionUpdateRoutine, RollCallPredictor
 
 
-prediction_result: list = [0]
+prediction_result: list = [None]
 
 app = Flask("ROLLCALL_PREDICTOR")
 
@@ -14,6 +14,10 @@ def index():
 
 @app.route("/get_weather_json")
 def get_weather_json():
+    if prediction_result[0] is None:
+        return {}
+    
+    
     pres: RollCallPredictor = prediction_result[0]
     to_return = {
         "temperature": pres.parsed_weather.temperature,

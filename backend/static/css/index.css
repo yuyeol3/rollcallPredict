@@ -11,8 +11,8 @@ weather-displayer {
     position: fixed;
     top: 50px; left: 0;
     width: 100%;
-    height: 100%;
-    padding: 10px;
+    height: calc(100% - 50px);
+    overflow-y: scroll;
 
 }
 

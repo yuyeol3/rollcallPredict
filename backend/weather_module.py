@@ -2,11 +2,12 @@ import requests
 import json
 from openapi_json_parser import OpenapiJsonParser
 import consts
+import math
 
 API_KEY = consts.API_KEY
 URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
 
-def get_weather(base_date: str, base_time: str, nx: str, ny: str, fcst_date: str, fcst_time: str) -> list[dict]:
+def get_weather(base_date: str, base_time: str, nx: str, ny: str, fcst_date: str, fcst_time: str) -> list:
     """
     날씨 데이터를 받아오는 함수\n
     Args:\n
@@ -85,6 +86,25 @@ class ParsedWeather:
         return f"ParsedWeather(fcst_date = {self.fcst_date}, temp = {self.temperature}, pcp = {self.precipitation_status})"
 
 
+    def calc_wind_chill(self):
+        temp = int(self.temperature)
+        ws = float(self.wind_speed)
+        if (temp > 10 or
+            ws < 1.3):
+            return temp
+        
+        return 13.12 + 0.6215 * temp - 11.37 * (ws ** 0.16) + 0.3965 * (ws ** 0.16) * temp 
+
+    def calc_wgbt(self):
+        # 호주기상청 abm모델
+        ta = float(self.temperature)
+        rh = float(self.humidity)
+        e = (6.105 * (rh / 100)) * math.exp((17.27 * ta) / (237.7 + ta))
+        return 0.567 * ta + 0.393 * e + 3.94
+
+    def calc_wgbt_morning(self):
+        # 아침 기준 온도지수 구하기
+        return self.calc_wgbt() - 3.0
 
 
 if __name__ == "__main__":

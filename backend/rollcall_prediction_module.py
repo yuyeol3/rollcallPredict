@@ -61,13 +61,14 @@ class RollCallPredictor:
         return {"WTH":self.parsed_weather, "IS_INSIDE": self.is_inside_rollcall}
 
     def _chk_inside_rollcall(self, pweather):
+        print(pweather.calc_wgbt_morning())
         return (
             self.is_holiday or
             pweather.precipitation_status != "없음" or
-            int(pweather.temperature) >= 30 or
-            int(pweather.temperature) <= 0
+            pweather.calc_wgbt_morning() >= 22 or
+            pweather.calc_wind_chill() <= -5
         )
-        
+     
 
 if __name__ == "__main__":
     print(RollCallPredictor("20230619", "1700", "20230620").predict())

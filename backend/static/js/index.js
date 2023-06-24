@@ -10,7 +10,54 @@ module.exports = {image_dir}
 },{}],2:[function(require,module,exports){
 const { image_dir } = require("./consts.js")
 
+class LoadingStatus extends HTMLElement
+{
+    constructor() {
+        super();
+        this.style.position = "fixed";
+        this.style.top = "0";
+        this.style.bottom = "0";
+        this.style.width = "100%";
+        this.style.height = "100%";
 
+        this.style.display = "none";
+        this.style.flexFlow = "column nowrap";
+        this.style.justifyContent = "center";
+        this.style.alignItems = "center";
+
+        this.styleElement = document.createElement("style");
+        this.styleElement.innerHTML = `
+        #loading-img {
+            width: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+        }
+        `;
+    }
+
+    connectedCallback() {
+        this.innerHTML = `
+        <img id="loading-img" src="./static/images/loading.png"></img>
+        `;
+        this.prepend(this.styleElement);
+    }
+
+    showLoading() {
+        this.style.display = "flex";
+    }
+
+    hideLoading() {
+        this.style.display = "none";
+    }
+}
 
 class WeatherDisplayer extends HTMLElement
 {
@@ -20,6 +67,7 @@ class WeatherDisplayer extends HTMLElement
         this.styleElement.innerHTML = `
         #weather-status-div {
             height: 30%;
+            padding: 10px;
             display: flex;
             flex-flow: row wrap;
             justify-content: center;
@@ -27,7 +75,9 @@ class WeatherDisplayer extends HTMLElement
         }
 
         #rollcall-status-div {
+            width: 100%;
             height: 70%;
+            padding: 10px;
         }
 
         #weather-icon-div {
@@ -56,19 +106,38 @@ class WeatherDisplayer extends HTMLElement
             margin: 10px 0;
         }
 
+        #detailed-info-div {
+            padding: 10px;
+        }
+
         #temp {
             font-size: 60px;
         }
 
         #updated-time {
-            display: inline;
+            text-align: center;
         }
+
+        #update-weather-btn {
+            width: 150px;
+            height: 50px;
+            margin: 0px calc((100% - 150px) / 2);
+            font-weight: bold;
+            background-color: white;
+            border: 1px solid black;
+        }
+
+        #update-weather-btn:active {
+            background-color: gray;
+        }
+
 
         `;
     }
 
     connectedCallback() {
         this.innerHTML = `
+        <loading-stat></loading-stat>
         <div id="weather-status-div">
             <div id="weather-icon-div">
                 <img id="weather-icon-img" src=""></img>
@@ -98,7 +167,9 @@ class WeatherDisplayer extends HTMLElement
 
 
     async updateWeather() {
+        const loadingStat = this.querySelector("loading-stat");
         try {
+            loadingStat.showLoading();
             console.log("attempting to update weather..");
             const data = await this.fetchData();
             
@@ -126,6 +197,7 @@ class WeatherDisplayer extends HTMLElement
             console.error(error);
         }
 
+        loadingStat.hideLoading();
     }
 
     async fetchData() {
@@ -168,4 +240,5 @@ class TopBar extends HTMLElement
 
 customElements.define("weather-displayer", WeatherDisplayer);
 customElements.define("top-bar", TopBar);
+customElements.define("loading-stat", LoadingStatus);
 },{"./consts.js":1}]},{},[2]);
