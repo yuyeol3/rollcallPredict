@@ -106,6 +106,14 @@ class ParsedWeather:
         # 아침 기준 온도지수 구하기
         return self.calc_wgbt() - 3.0
 
+    def calc_discomfort_index(self):
+        # 불쾌지수
+        ta = float(self.temperature)
+        rh = float(self.humidity)
+        return 0.81 * ta + 0.01 * rh * (0.99 * ta - 14.3) + 46.3
+
+    
+
 
 if __name__ == "__main__":
     result = get_weather("20230618", "1700", "96", "76", "20230619", "0700")

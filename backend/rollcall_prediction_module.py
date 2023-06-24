@@ -60,13 +60,14 @@ class RollCallPredictor:
 
         return {"WTH":self.parsed_weather, "IS_INSIDE": self.is_inside_rollcall}
 
-    def _chk_inside_rollcall(self, pweather):
+    def _chk_inside_rollcall(self, pweather: ParsedWeather):
         print(pweather.calc_wgbt_morning())
         return (
             self.is_holiday or
             pweather.precipitation_status != "없음" or
-            pweather.calc_wgbt_morning() >= 22 or
-            pweather.calc_wind_chill() <= -5
+            pweather.calc_discomfort_index() >= 81 or
+            pweather.calc_wind_chill() <= -5 or
+            int(pweather.wind_speed) >= 10
         )
      
 
