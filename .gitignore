@@ -1,2 +1,4 @@
 __pycache__/
+.uwsgi_plugins_builder/
+uwsgi.log
 consts.py
