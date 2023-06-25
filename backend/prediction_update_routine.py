@@ -2,6 +2,7 @@ from threading import Thread
 from rollcall_prediction_module import RollCallPredictor
 import datetime
 from time import sleep
+import uwsgidecorators
 
 TZ_KST = datetime.timezone(datetime.timedelta(hours=9))
 
@@ -18,6 +19,7 @@ class PredictionUpdateRoutine:
         self.thrd.daemon = True
         self.thrd.start()
 
+
     def _task(self):
         prev_updated_hour = None
         while (True):
@@ -27,7 +29,6 @@ class PredictionUpdateRoutine:
                 prev_updated_hour = now.hour
                 self._update_prediction(now, prev_updated_hour)
 
-            sleep(10)
 
     def _update_prediction(self, now, prev_updated_hour):
         for i in range(self.PREDICTION_COUNTER):

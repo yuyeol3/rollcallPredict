@@ -5,7 +5,19 @@ from prediction_update_routine import PredictionUpdateRoutine, RollCallPredictor
 
 prediction_result: list = [None]
 
-app = Flask("ROLLCALL_PREDICTOR")
+class RollcallPredictionServer(Flask):
+    def __init__(self, *args, **kargs):
+        super().__init__(*args, **kargs)
+        self.prediction_result: list = [None]
+        print("running init")
+        routine = PredictionUpdateRoutine(self.prediction_result)
+        routine.start()
+    
+    def run(self, *args, **kargs):
+        super().run(*args, **kargs)
+
+
+app = RollcallPredictionServer("ROLLCALL_PREDICTOR")
 
 
 @app.route("/")
@@ -14,11 +26,11 @@ def index():
 
 @app.route("/get_weather_json")
 def get_weather_json():
-    if prediction_result[0] is None:
+    if app.prediction_result[0] is None:
         return {}
     
     
-    pres: RollCallPredictor = prediction_result[0]
+    pres: RollCallPredictor = app.prediction_result[0]
     to_return = {
         "temperature": pres.parsed_weather.temperature,
         "precipitation_stat": pres.parsed_weather.precipitation_status,
@@ -33,7 +45,5 @@ def get_weather_json():
     return to_return
 
 if __name__ == "__main__":
-    routine = PredictionUpdateRoutine(prediction_result)
-    routine.start()
     app.run(debug=False, host="0.0.0.0")
 
