@@ -3,13 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from prediction_update_routine import PredictionUpdateRoutine, RollCallPredictor
 
 
-prediction_result: list = [None]
 
 class RollcallPredictionServer(Flask):
     def __init__(self, *args, **kargs):
         super().__init__(*args, **kargs)
         self.prediction_result: list = [None]
-        print("running init")
         routine = PredictionUpdateRoutine(self.prediction_result)
         routine.start()
     
