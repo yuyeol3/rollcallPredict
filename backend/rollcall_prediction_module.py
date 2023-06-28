@@ -67,7 +67,7 @@ class RollCallPredictor:
             pweather.precipitation_status != "없음" or
             pweather.calc_discomfort_index() >= 81 or
             pweather.calc_wind_chill() <= -5 or
-            int(pweather.wind_speed) >= 10
+            float(pweather.wind_speed) >= 10
         )
      
 

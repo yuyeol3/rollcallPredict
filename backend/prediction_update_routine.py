@@ -2,7 +2,7 @@ from threading import Thread
 from rollcall_prediction_module import RollCallPredictor
 import datetime
 from time import sleep
-import uwsgidecorators
+
 
 TZ_KST = datetime.timezone(datetime.timedelta(hours=9))
 
