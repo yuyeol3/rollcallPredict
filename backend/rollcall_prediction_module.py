@@ -12,6 +12,7 @@ class HolidayChecker:
         self.year = year
         self.month = month
         self.day = day
+        
 
     def chk_holiday(self):
         temp_dt = datetime.date(self.year, self.month, self.day)

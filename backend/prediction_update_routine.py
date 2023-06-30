@@ -2,7 +2,7 @@ from threading import Thread
 from rollcall_prediction_module import RollCallPredictor
 import datetime
 from time import sleep
-
+from datetime import timedelta
 
 TZ_KST = datetime.timezone(datetime.timedelta(hours=9))
 
@@ -33,14 +33,16 @@ class PredictionUpdateRoutine:
     def _update_prediction(self, now, prev_updated_hour):
         for i in range(self.PREDICTION_COUNTER):
             try:
+                target_date = now + timedelta(days=1)
                 res = RollCallPredictor(f"{now.year}{now.month:02}{now.day:02}", 
-                                    f"{prev_updated_hour - (i + 2):02}00",
-                                    f"{now.year}{now.month:02}{now.day + 1:02}")
+                                    # 0시 정각인 경우 시간이 음수가 되는 현상 방지
+                                    f"{(prev_updated_hour + 24 - (i + 2)) % 24:02}00",
+                                    f"{target_date.year}{target_date.month:02}{target_date.day:02}")
                 
                 res.predict()
             except Exception as err:
                 print(err)
-
+                # raise err
             else:
                 self.data_save_addr[0] = res
                 print("업데이트 성공")
