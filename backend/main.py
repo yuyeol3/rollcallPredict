@@ -38,6 +38,7 @@ def get_weather_json():
         "humidity": pres.parsed_weather.humidity,
         "precipitation_probability": pres.parsed_weather.precipitation_probability,
         "precipitation_hr": pres.parsed_weather.precipitation_hr,
+        "wgbt": int(pres.parsed_weather.calc_wgbt()),
         "inside_rollcall" : pres.is_inside_rollcall
     }
     return to_return

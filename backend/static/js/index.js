@@ -10,6 +10,9 @@ module.exports = {image_dir}
 },{}],2:[function(require,module,exports){
 const { image_dir } = require("./consts.js")
 
+/**
+ * 로딩 상태를 보여주는 customElement
+ */
 class LoadingStatus extends HTMLElement
 {
     constructor() {
@@ -50,10 +53,16 @@ class LoadingStatus extends HTMLElement
         this.prepend(this.styleElement);
     }
 
+    /**
+     * 로딩화면 보여주기
+     */
     showLoading() {
         this.style.display = "flex";
     }
 
+    /**
+     * 로딩 화면 숨기기
+     */
     hideLoading() {
         this.style.display = "none";
     }
@@ -157,6 +166,7 @@ class WeatherDisplayer extends HTMLElement
                 <li id="humidity">습도: </li>
                 <li id="pcp-probability">강수확률: </li>
                 <li id="pcp-hr">강수량: </li>
+                <li id="wgbt">온도지수(추정): </li>
             </ul>
         </div>
         `;
@@ -189,7 +199,7 @@ class WeatherDisplayer extends HTMLElement
             this.querySelector("#humidity").innerText = `습도: ${data["humidity"]}%`;
             this.querySelector("#pcp-probability").innerText = `강수확률: ${data["precipitation_probability"]}%`;
             this.querySelector("#pcp-hr").innerText = `강수량: ${data["precipitation_hr"]}`;
-            
+            this.querySelector("#wgbt").innerText = `온도지수(추정): ${data["wgbt"]}º`;
 
             this.querySelector("#tomorrow-rollcall").innerHTML = `명일 아침점호는 <b>${["야외", "실내"][Number(data["inside_rollcall"])]}점호</b>입니다`
         }

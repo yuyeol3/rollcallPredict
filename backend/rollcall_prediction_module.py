@@ -6,15 +6,27 @@ from openapi_json_parser import OpenapiJsonParser
 import consts
 
 class HolidayChecker:
+    '''
+    휴일인지 확인해주는 클래스
+    '''
     API_KEY = consts.API_KEY
     URL = "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"
     def __init__(self, year: int, month: int, day: int):
+        '''
+        Args:\n
+        `year (int)`\n
+        `month (int)`\n
+        `day (int)`\n
+        '''
         self.year = year
         self.month = month
         self.day = day
         
 
     def chk_holiday(self):
+        '''
+        설정한 날짜가 휴일인지 확인하는 함수
+        '''
         temp_dt = datetime.date(self.year, self.month, self.day)
 
         if (temp_dt.weekday() >= 5):
@@ -26,7 +38,15 @@ class HolidayChecker:
         
         return False
         
-    def _get_special_holidays(self, year, month):
+    def _get_special_holidays(self, year: int, month: int):
+        '''
+        주말이 아닌 공휴일 데이터를 가져오는 함수\n
+        Args:\n
+        `year (int)`\n
+        `month (int)`\n
+        Returns:\n
+        `dict[str, str]`: 날짜(키)에 휴일이름(값)이 담긴 딕셔너리 
+        '''
         params = {
             "serviceKey" : HolidayChecker.API_KEY,
             "solYear" : str(year),
@@ -62,13 +82,14 @@ class RollCallPredictor:
         return {"WTH":self.parsed_weather, "IS_INSIDE": self.is_inside_rollcall}
 
     def _chk_inside_rollcall(self, pweather: ParsedWeather):
-        print(pweather.calc_wgbt_morning())
+
         return (
             self.is_holiday or
             pweather.precipitation_status != "없음" or
             pweather.calc_discomfort_index() >= 81 or
             pweather.calc_wind_chill() <= -5 or
-            float(pweather.wind_speed) >= 10
+            float(pweather.wind_speed) >= 10 or
+            pweather.calc_wgbt() >= 22
         )
      
 

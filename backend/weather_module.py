@@ -96,15 +96,18 @@ class ParsedWeather:
         return 13.12 + 0.6215 * temp - 11.37 * (ws ** 0.16) + 0.3965 * (ws ** 0.16) * temp 
 
     def calc_wgbt(self):
-        # 호주기상청 abm모델
+        # 한국 기상청 KMA2016
+        ta = float(self.temperature)
+        tw = self.calc_tw()
+        return -0.2442 + 0.55399 * tw + 0.45535 * ta - 0.0022 * tw * tw + 0.00278 * tw * ta
+
+
+    def calc_tw(self):
         ta = float(self.temperature)
         rh = float(self.humidity)
-        e = (6.105 * (rh / 100)) * math.exp((17.27 * ta) / (237.7 + ta))
-        return 0.567 * ta + 0.393 * e + 3.94
-
-    def calc_wgbt_morning(self):
-        # 아침 기준 온도지수 구하기
-        return self.calc_wgbt() - 3.0
+        tw = ta * math.atan(0.151977 * math.sqrt(rh + 8.313659)) + math.atan(ta+rh) - math.atan(rh - 1.67633) + 0.00391838 * (rh ** (3/2)) * math.atan(0.023101 * rh) - 4.686035
+        return tw
+        
 
     def calc_discomfort_index(self):
         # 불쾌지수
