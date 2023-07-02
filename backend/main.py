@@ -34,11 +34,12 @@ def get_weather_json():
         "precipitation_stat": pres.parsed_weather.precipitation_status,
         "base_date": pres.parsed_weather.base_date,
         "base_time": pres.parsed_weather.base_time,
+        "target_date" : pres.parsed_weather.get_target_date(),
         "sky_status": pres.parsed_weather.sky_status,
         "humidity": pres.parsed_weather.humidity,
         "precipitation_probability": pres.parsed_weather.precipitation_probability,
         "precipitation_hr": pres.parsed_weather.precipitation_hr,
-        "wgbt": int(pres.parsed_weather.calc_wgbt()),
+        "wbgt": int(pres.parsed_weather.calc_wbgt()),
         "inside_rollcall" : pres.is_inside_rollcall
     }
     return to_return

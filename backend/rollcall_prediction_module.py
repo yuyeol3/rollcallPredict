@@ -89,7 +89,7 @@ class RollCallPredictor:
             pweather.calc_discomfort_index() >= 81 or
             pweather.calc_wind_chill() <= -5 or
             float(pweather.wind_speed) >= 10 or
-            pweather.calc_wgbt() >= 22
+            pweather.calc_wbgt() >= 22
         )
      
 

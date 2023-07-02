@@ -95,7 +95,7 @@ class ParsedWeather:
         
         return 13.12 + 0.6215 * temp - 11.37 * (ws ** 0.16) + 0.3965 * (ws ** 0.16) * temp 
 
-    def calc_wgbt(self):
+    def calc_wbgt(self):
         # 한국 기상청 KMA2016
         ta = float(self.temperature)
         tw = self.calc_tw()
@@ -114,6 +114,14 @@ class ParsedWeather:
         ta = float(self.temperature)
         rh = float(self.humidity)
         return 0.81 * ta + 0.01 * rh * (0.99 * ta - 14.3) + 46.3
+    
+    def get_target_date(self):
+        forecast_date = self.fcst_date
+
+        f_year = forecast_date[:4]
+        f_month = forecast_date[4:6]
+        f_day = forecast_date[6:]
+        return f"{f_year}년 {f_month}월 {f_day}일"
 
     
 
