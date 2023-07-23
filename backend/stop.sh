@@ -1,3 +1,1 @@
-
-
-uwsgi --stop ./uwsgi.pid
+sudo uwsgi --stop ./uwsgi.pid

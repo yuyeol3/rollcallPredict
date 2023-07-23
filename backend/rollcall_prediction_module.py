@@ -64,6 +64,7 @@ class HolidayChecker:
         
 
 class RollCallPredictor:
+    '''날씨와 휴일 정보를 불러와 점호 결과를 예측하는 클래스'''
     def __init__(self, base_date, base_hour, target_date):
         self.base_date = base_date
         self.base_hour = base_hour
@@ -73,6 +74,7 @@ class RollCallPredictor:
                                          day=int(target_date[6:])).chk_holiday()
 
     def predict(self):
+        '''예측 실시'''
         self.parsed_weather = ParsedWeather(get_weather(self.base_date, self.base_hour,
                                                         consts.NX, consts.NY,
                                                         self.target_date, "0600"))

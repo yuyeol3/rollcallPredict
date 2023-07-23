@@ -1,6 +1,7 @@
 import json
 
 class OpenapiJsonParser:
+    '''공공데이터포털에서 가져온 json 데이터들을 `list[dict]` 형으로 파싱해주는 클래스'''
     def __init__(self, serialized_json):
         self.reset(serialized_json)
 

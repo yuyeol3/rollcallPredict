@@ -4,11 +4,13 @@ const image_dir = {
     "비" : "./static/images/rain.png",
     "비/눈" : "./static/images/sleet.png",
     "눈" : "./static/images/snow.png"
-}
+};
 
-module.exports = {image_dir}
+const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
+
+module.exports = {image_dir, noti_openkey}
 },{}],2:[function(require,module,exports){
-const { image_dir } = require("./consts.js")
+const { image_dir, noti_openkey } = require("./consts.js")
 
 /**
  * 로딩 상태를 보여주는 customElement
@@ -247,23 +249,222 @@ class TopBar extends HTMLElement
         this.styleElement.innerHTML = `
         #app-title {
             display: inline-block;
+
             text-align: center;
             margin: 15px auto;
             width: 100%;
             height: 20px;
         }
+
+        #icons-div {
+            position: fixed;
+            top: 0; right: 0;
+            width: 50px;
+            height: 50px;
+        }
+
+        #icons-div .call-modal {
+            height: 50px;
+            border-width: 0px;
+            background-color: white;
+        }
+
+
+        #noti-modal img {
+            width: 30px;
+        }
+
+
         `;
     }
 
     connectedCallback() {
         this.innerHTML = `
+            <div id="icons-div">
+                <modal-package id="noti-modal"></modal-package>
+
+            </div>
             <h3 id="app-title">내일점호</h3>
         `;
         this.appendChild(this.styleElement);
+        this._setNotiModal();
     }
-}
+
+    _setNotiModal() {
+        const notiModal = this.querySelector("#noti-modal");
+        notiModal.setDialogHTML(`
+            <style>
+                .setting-list-div {
+                    height: 30px;
+                    margin: 10px 0;
+                    display: flex;
+                    flex-direction : row;
+                    justify-content : space-between;
+                }
+
+                .setting-list-div button {
+                    height: 25px;
+                    background-color: white;
+                    border: 1px solid black;
+                }
+
+                .setting-list-div p {
+                    margin: 0;
+                    height: 25px;
+                }
+            </style>
+            <div class="setting-list-div">
+                <p>매일 오후 9시에 알람 받기</p><button id="subscribe-button">구독 신청</button>
+            </div>
+        `);
+        notiModal.setButtonHTML(`
+            <img src="./static/images/bell.png"></img>
+        `)
+
+        notiModal.getDialog().querySelector("#subscribe-button").onclick = () => { 
+            new NotiHandler(noti_openkey).checkPermission(); 
+        }
+
+    }
+
+};
+
+class Modal extends HTMLElement {
+    constructor() {
+        super();
+
+        this.styleElement = document.createElement("style");
+        this.styleElement.innerHTML = `
+            .modal-dialog {
+                width: 90vw;
+                height: 45vh;
+                border-width: 0px;
+                border-radius: 50px;
+            }
+
+            .close-button {
+                border-width: 0px;
+                background-color: white;
+                height: 20px;
+                margin: 10px 0;
+                float : right;
+            }
+
+            .content-div {
+
+                clear : right;
+                margin : 10px 0;
+            }
+
+
+        `;
+    }
+
+    connectedCallback() {
+        this.innerHTML = `
+        <button class="call-modal"></button>
+        <dialog class="modal-dialog">
+            <form class="modal-form" method="dialog">
+                <button class="close-button" value="close">x</button>
+            </form>
+            <div class="content-div"></div>
+        </dialog>
+        `;
+        this.appendChild(this.styleElement);
+        this._setModalButton();
+    }
+
+    _setModalButton() {
+        this.querySelector(".call-modal").onclick = ()=> { this.querySelector(".modal-dialog").showModal(); }
+    }
+
+    setButtonHTML(content) {
+        this.querySelector(".call-modal").innerHTML = content;
+    }
+
+    setDialogHTML(content) {
+        this.querySelector(".content-div").innerHTML = content;
+    }
+    
+    getButton() {
+        return this.querySelector(".call-modal");
+    }
+
+    getDialog() {
+        return this.querySelector(".modal-dialog");   
+    }
+};
+
+class NotiHandler {
+    constructor(openKey) {
+        this.openKey = openKey;
+    }
+
+    checkPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission()
+              .then((permission) => {
+                if (permission === 'granted') {
+                  // User has granted permission
+                  // Subscribe for push notifications
+                  this.sendSupscriptionReq();
+                } else {
+                  // User has denied permission
+                  console.log('Push notification permission denied.');
+                }
+              })
+              .catch((error) => {
+                console.error('Error requesting notification permission:', error);
+              });
+          }
+          
+    }
+
+    sendSupscriptionReq() {
+        console.log("inside sendSupscriptionReq()")
+
+
+        navigator.serviceWorker.register("./static/js/serviceWorker.js")
+            .then((registration) => {
+
+            registration.pushManager.getSubscription().then((subscription) => {
+                if (subscription) {
+                    this.saveOnDB(subscription);
+                } else {
+                    registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: this.openKey
+                    })
+                    .then((subscription) => {
+                        this.saveOnDB(subscription);
+                    })
+                }
+            })
+
+        })
+    }
+
+    async saveOnDB(subscription) {
+        console.log("inside SaveOnDB(subscription)");
+        const res = await fetch("./regist_subscription", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(subscription)
+        })
+
+        const data = await res.json();
+        return data;
+    }
+};
 
 customElements.define("weather-displayer", WeatherDisplayer);
 customElements.define("top-bar", TopBar);
 customElements.define("loading-stat", LoadingStatus);
+customElements.define("modal-package", Modal);
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./static/js/serviceWorker.js");
+}
 },{"./consts.js":1}]},{},[2]);
