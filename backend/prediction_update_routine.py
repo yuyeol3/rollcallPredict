@@ -37,10 +37,10 @@ class Routine:
         시간을 확인하고 시간이 바뀌면 멤버변수 prev_hour을 현재 시간으로 고치고 True를 반환.
         아니면 False를 반환
         '''
-        self.now = datetime.datetime.now(tz=TZ_KST)
+        self.now_date = datetime.datetime.now(tz=TZ_KST)
         if ((self.prev_hour is None) or
-            (self.prev_hour != self.now.hour)):
-            self.prev_hour = self.now.hour
+            (self.prev_hour != self.now_date.hour)):
+            self.prev_hour = self.now_date.hour
             return True
         
         return False
@@ -87,8 +87,8 @@ class NotificationPushRoutine(Routine):
 
     def _target_fn(self):
         with self.server.app_context():
-            sleep(10)
-            self._send_notification()
+            if self.now_date.hour == 21:
+                self._send_notification()
 
     def _send_notification(self):
         print("sending notifications..")
@@ -97,13 +97,6 @@ class NotificationPushRoutine(Routine):
 
 
         for subscriber in subscribers:
-            # print(subscriber.convert_to_json())
-            # self.pusher.send(
-            #     subscriber.convert_to_json(),
-            #     "명일 아침점호는 "
-            #     f'{["실외", "실내"][rollcall_type]}'
-            #     "점호입니다."
-            # )
             try:
                 webpush(
                     subscriber.convert_to_json(),
@@ -118,6 +111,8 @@ class NotificationPushRoutine(Routine):
                 )
             except WebPushException:
                 print("WebPushException arose")
+        
+        print("notifications have successfully sent")
 
 def init_routines(app):
     address = app.prediction_result
