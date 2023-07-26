@@ -3,10 +3,12 @@ from rollcall_prediction_module import RollCallPredictor
 import datetime
 from datetime import timedelta
 import traceback
-from pywebpush import webpush
+# from flask_pywebpush import WebPush
+from pywebpush import webpush, WebPushException
 from consts import WEBPUSH_KEY
 import database_handler as dbhandler
 from time import sleep
+import json
 
 
 TZ_KST = datetime.timezone(datetime.timedelta(hours=9))
@@ -80,6 +82,8 @@ class NotificationPushRoutine(Routine):
         Routine.__init__(self)
         self.data_save_addr = data_save_addr
         self.server = server
+         #self.pusher = WebPush(server,
+         #                     WEBPUSH_KEY["privateKey"])
 
     def _target_fn(self):
         with self.server.app_context():
@@ -93,15 +97,27 @@ class NotificationPushRoutine(Routine):
 
 
         for subscriber in subscribers:
-            webpush(
-                subscriber.convert_to_json(),
-                "명일 아침점호는 "
-                f'{["실외", "실내"][rollcall_type]}'
-                "점호입니다.",
-                vapid_private_key=WEBPUSH_KEY["privateKey"],
-                vapid_claims=WEBPUSH_KEY["subject"]
-            )
-
+            # print(subscriber.convert_to_json())
+            # self.pusher.send(
+            #     subscriber.convert_to_json(),
+            #     "명일 아침점호는 "
+            #     f'{["실외", "실내"][rollcall_type]}'
+            #     "점호입니다."
+            # )
+            try:
+                webpush(
+                    subscriber.convert_to_json(),
+                    "명일 아침점호는 "
+                    f'{["실외", "실내"][rollcall_type]}'
+                    "점호입니다."
+                    ,
+                    vapid_private_key=WEBPUSH_KEY["privateKey"],
+                    vapid_claims={
+                        "sub" : WEBPUSH_KEY["subject"]
+                    }
+                )
+            except WebPushException:
+                print("WebPushException arose")
 
 def init_routines(app):
     address = app.prediction_result
