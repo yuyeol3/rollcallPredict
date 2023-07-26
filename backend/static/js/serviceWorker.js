@@ -1,5 +1,5 @@
 self.addEventListener("push", (event)=>{
-    const title = event.data.text();
+    const data = event.data.text()["body"];
 
-    event.waitUntil(self.registration.showNotification(title));
+    event.waitUntil(self.registration.showNotification(data));
 });

@@ -1,6 +1,10 @@
 from rollcal_prediction_server import *
 import database_handler as dbhandler
+import prediction_update_routine as rt
+from rollcall_prediction_module import RollCallPredictor
 
+with app.app_context():
+    rt.init_routines(app)
 
 @app.route("/")
 def index():
@@ -31,8 +35,16 @@ def get_weather_json() -> dict:
 @app.route("/regist_subscription", methods=['POST', 'GET'])
 def regist_subscription():
     if request.method == "POST":
-        print("POST request made!")
-        print(request.json)
+        subscription = request.json
+        to_add = dbhandler.Subscribers(
+            endpoint=subscription["endpoint"],
+            p256dh=subscription["keys"]["p256dh"],
+            auth=subscription["keys"]["auth"]
+        )
+        dbhandler.db.session.add(to_add)
+        dbhandler.db.session.commit()
+
+        #push.send(subscription, "this is test")
 
         return {"registration_result":True}
 
