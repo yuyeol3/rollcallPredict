@@ -3,12 +3,9 @@ from rollcall_prediction_module import RollCallPredictor
 import datetime
 from datetime import timedelta
 import traceback
-# from flask_pywebpush import WebPush
 from pywebpush import webpush, WebPushException
 from consts import WEBPUSH_KEY
 import database_handler as dbhandler
-from time import sleep
-import json
 
 
 TZ_KST = datetime.timezone(datetime.timedelta(hours=9))

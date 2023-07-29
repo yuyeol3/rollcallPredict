@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 import rollcal_prediction_server as server
 import os
 
-
+server.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(server.app)
 
 

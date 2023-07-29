@@ -1,14 +1,15 @@
 from rollcal_prediction_server import *
 import database_handler as dbhandler
-import prediction_update_routine as rt
+import routines as rt
 from rollcall_prediction_module import RollCallPredictor
 
-with app.app_context():
-    rt.init_routines(app)
+# 루틴 실행하기
+rt.init_routines(app)
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/get_weather_json")
 def get_weather_json() -> dict:
@@ -53,4 +54,4 @@ def regist_subscription():
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0")
-
+    # app.run(debug=False)
