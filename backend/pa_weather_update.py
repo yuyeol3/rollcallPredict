@@ -7,7 +7,9 @@ class Pa_PredictionUpdateRoutine(PredictionUpdateRoutine):
         self.data_save_addr = [None]
         super().__init__(self.data_save_addr)
     
-    def _update_prediction(self, now: datetime.datetime, prev_updated_hour: int):
+    def _update_prediction(self):
+        now = datetime.datetime.now()
+        prev_updated_hour = now.hour
         '''예측 업데이트 (private)'''
         for i in range(self.PREDICTION_COUNTER):
             try:
@@ -44,7 +46,7 @@ class Pa_PredictionUpdateRoutine(PredictionUpdateRoutine):
 
 def main():
     prediction_rt = Pa_PredictionUpdateRoutine()
-    prediction_rt._task()
+    prediction_rt._update_prediction()
 
 if __name__ == "__main__":
     main()

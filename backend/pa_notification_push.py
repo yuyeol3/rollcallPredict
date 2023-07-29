@@ -1,11 +1,15 @@
 from routines import *
+from flask_pywebpush import WebPush
 import database_handler as dbhandler
 import json
 
 class Pa_NotificationPushRoutine(NotificationPushRoutine):
     def __init__(self, server):
         super().__init__([None], server)
-
+        self.webpush = WebPush(dbhandler.server.app,
+                              WEBPUSH_KEY["privateKey"],
+                              {"sub" : WEBPUSH_KEY["subject"]}
+                              )
 
     def _send_notification(self):
         with self.server.app_context():
@@ -15,17 +19,11 @@ class Pa_NotificationPushRoutine(NotificationPushRoutine):
 
             for subscriber in subscribers:
                 try:
-                    webpush(
-                        subscriber.convert_to_json(),
-                        "명일 아침점호는 "
-                        f'{["실외", "실내"][rollcall_type]}'
-                        "점호입니다."
-                        ,
-                        vapid_private_key=WEBPUSH_KEY["privateKey"],
-                        vapid_claims={
-                            "sub" : WEBPUSH_KEY["subject"]
-                        }
-                    )
+                    self.webpush.send(subscriber.convert_to_json(),
+                                     "명일 아침점호는 "
+                                     f'{["실외", "실내"][rollcall_type]}'
+                                     "점호입니다.")
+                                     
                 except WebPushException:
                     print("WebPushException arose")
             

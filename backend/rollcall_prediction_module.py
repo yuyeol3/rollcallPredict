@@ -92,7 +92,7 @@ class RollCallPredictor:
             pweather.calc_wind_chill() <= -5 or
             float(pweather.wind_speed) >= 10 or
             # pweather.calc_wbgt() >= 22
-            pweather.temperature >= 25
+            int(pweather.temperature) >= 25
         )
      
 
