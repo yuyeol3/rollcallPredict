@@ -3,6 +3,8 @@ import database_handler as dbhandler
 from rollcall_prediction_module import RollCallPredictor
 import json
 
+
+
 @app.route("/")
 def index():
     return render_template("index.html")

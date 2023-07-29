@@ -1,15 +1,27 @@
 from routines import *
-from flask_pywebpush import WebPush
+from flask_pywebpush import WebPush, current_app
 import database_handler as dbhandler
 import json
+
+class CustomWebPush(WebPush):
+    def __init__(self, app, private_key, sender_info):
+        super().__init__(app, private_key, sender_info)
+
+    @staticmethod
+    def send(subscription: dict, notification: str, **kwargs):
+        '''Send a notification payload to a given subscription.'''
+        webpush(subscription,
+                notification,
+                vapid_private_key=current_app.config['WEBPUSH_VAPID_PRIVATE_KEY'],
+                vapid_claims=current_app.config['WEBPUSH_VAPID_CLAIMS'],
+                **kwargs)
 
 class Pa_NotificationPushRoutine(NotificationPushRoutine):
     def __init__(self, server):
         super().__init__([None], server)
-        self.webpush = WebPush(dbhandler.server.app,
+        self.webpush = CustomWebPush(dbhandler.server.app,
                               WEBPUSH_KEY["privateKey"],
-                              {"sub" : WEBPUSH_KEY["subject"]}
-                              )
+                              WEBPUSH_KEY["subject"])
 
     def _send_notification(self):
         with self.server.app_context():
@@ -23,7 +35,7 @@ class Pa_NotificationPushRoutine(NotificationPushRoutine):
                                      "명일 아침점호는 "
                                      f'{["실외", "실내"][rollcall_type]}'
                                      "점호입니다.")
-                                     
+
                 except WebPushException:
                     print("WebPushException arose")
             
