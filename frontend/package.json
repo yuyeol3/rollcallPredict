@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "browserify index.js -o ../backend/static/js/index.js && cd ../backend && python main.py",
-    "build": "browserify index.js -o ../backend/static/js/index.js"
+    "test": "browserify index.js -o ../backend/static/js/index.js && cp serviceWorker.js ../backend/static/js && cd ../backend && python main.py",
+    "build": "browserify index.js -o ../backend/static/js/index.js && cp serviceWorker.js ../backend/static/js"
   },
   "author": "yuyeol3",
   "license": "ISC"

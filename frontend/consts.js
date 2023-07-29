@@ -3,6 +3,8 @@ const image_dir = {
     "비" : "./static/images/rain.png",
     "비/눈" : "./static/images/sleet.png",
     "눈" : "./static/images/snow.png"
-}
+};
 
-module.exports = {image_dir}
+const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
+
+module.exports = {image_dir, noti_openkey}
