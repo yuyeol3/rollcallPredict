@@ -15,8 +15,12 @@ class Modal extends HTMLElement {
                 border-width: 0px;
                 background-color: white;
                 height: 20px;
-                margin: 10px 0;
+                margin-bottom: 10px;
                 float : right;
+            }
+
+            .close-button img {
+                width: 10px;
             }
 
             .content-div {
@@ -34,7 +38,7 @@ class Modal extends HTMLElement {
         <button class="call-modal"></button>
         <dialog class="modal-dialog">
             <form class="modal-form" method="dialog">
-                <button class="close-button" value="close">x</button>
+                <button class="close-button" value="close"><img src="./static/images/close.png"></button>
             </form>
             <div class="content-div"></div>
         </dialog>

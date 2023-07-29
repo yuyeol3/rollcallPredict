@@ -76,8 +76,12 @@ class Modal extends HTMLElement {
                 border-width: 0px;
                 background-color: white;
                 height: 20px;
-                margin: 10px 0;
+                margin-bottom: 10px;
                 float : right;
+            }
+
+            .close-button img {
+                width: 10px;
             }
 
             .content-div {
@@ -95,7 +99,7 @@ class Modal extends HTMLElement {
         <button class="call-modal"></button>
         <dialog class="modal-dialog">
             <form class="modal-form" method="dialog">
-                <button class="close-button" value="close">x</button>
+                <button class="close-button" value="close"><img src="./static/images/close.png"></button>
             </form>
             <div class="content-div"></div>
         </dialog>
@@ -134,37 +138,54 @@ module.exports = {Modal}
  * noti 등록/수신을 위한 컨트롤 클레스.
  */
 class NotiHandler {
-    constructor(openKey) {
+    constructor(openKey, targetButton) {
         this.openKey = openKey;
+        this.targetButton = targetButton;
     }
 
-    registSubscription() {
+    async registSubscription() {
+        let permAllowance = await this._checkPermission();
 
+        if (permAllowance) {
+            this._sendSupscriptionReq();
+        }
     }
 
-    checkPermission() {
+    async _checkPermission() {
         if ('Notification' in window) {
-            Notification.requestPermission()
-              .then((permission) => {
-                if (permission === 'granted') {
-                  // User has granted permission
-                  // Subscribe for push notifications
-                  this.sendSupscriptionReq();
-                } else {
-                  // User has denied permission
-                  console.log('Push notification permission denied.');
+            try {
+                let permission = await Notification.requestPermission();
+                if (permission === "granted") {
+                    return true;
                 }
-              })
-              .catch((error) => {
+
+            } catch(error) {
                 console.error('Error requesting notification permission:', error);
-              });
-          }
+            } 
+        }
+        
+        return false;
+
+        // if ('Notification' in window) {
+        //     Notification.requestPermission()
+        //       .then((permission) => {
+        //         if (permission === 'granted') {
+        //           // User has granted permission
+        //           // Subscribe for push notifications
+        //           this._sendSupscriptionReq();
+        //         } else {
+        //           // User has denied permission
+        //           console.log('Push notification permission denied.');
+        //         }
+        //       })
+        //       .catch((error) => {
+        //         console.error('Error requesting notification permission:', error);
+        //       });
+        //   }
           
     }
 
-    sendSupscriptionReq() {
-        console.log("inside sendSupscriptionReq()")
-
+    _sendSupscriptionReq() {
 
         navigator.serviceWorker.register("./static/js/serviceWorker.js")
             .then((registration) => {
@@ -172,6 +193,7 @@ class NotiHandler {
             registration.pushManager.getSubscription().then((subscription) => {
                 if (subscription) {
                     console.log("구독이 이미 있습니다.");
+                    this._showSubscriptionSucceed();
                     // this.saveOnDB(subscription);
                 } else {
                     registration.pushManager.subscribe({
@@ -198,7 +220,16 @@ class NotiHandler {
         })
 
         const data = await res.json();
+
+        if (data.registration_result) {
+            this._showSubscriptionSucceed();
+        }
+
         return data;
+    }
+
+    _showSubscriptionSucceed() {
+        this.targetButton.innerText = "구독완료✔️"
     }
 };
 
@@ -236,7 +267,7 @@ class TopBar extends HTMLElement
         }
 
 
-        #noti-modal img {
+        #noti-modal .call-modal img {
             width: 30px;
         }
 
@@ -289,7 +320,8 @@ class TopBar extends HTMLElement
         `)
 
         notiModal.getDialog().querySelector("#subscribe-button").onclick = () => { 
-            new NotiHandler(noti_openkey).checkPermission(); 
+            const subscribeBtn = notiModal.getDialog().querySelector("#subscribe-button");
+            new NotiHandler(noti_openkey, subscribeBtn).registSubscription(); 
         }
 
     }

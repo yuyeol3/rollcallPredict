@@ -30,7 +30,7 @@ class TopBar extends HTMLElement
         }
 
 
-        #noti-modal img {
+        #noti-modal .call-modal img {
             width: 30px;
         }
 
@@ -83,7 +83,8 @@ class TopBar extends HTMLElement
         `)
 
         notiModal.getDialog().querySelector("#subscribe-button").onclick = () => { 
-            new NotiHandler(noti_openkey).checkPermission(); 
+            const subscribeBtn = notiModal.getDialog().querySelector("#subscribe-button");
+            new NotiHandler(noti_openkey, subscribeBtn).registSubscription(); 
         }
 
     }
