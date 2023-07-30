@@ -8,7 +8,7 @@ class Pa_PredictionUpdateRoutine(PredictionUpdateRoutine):
         super().__init__(self.data_save_addr)
     
     def _update_prediction(self):
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=TZ_KST)
         prev_updated_hour = now.hour
         '''예측 업데이트 (private)'''
         for i in range(self.PREDICTION_COUNTER):
