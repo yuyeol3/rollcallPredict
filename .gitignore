@@ -3,3 +3,4 @@ __pycache__/
 uwsgi.log
 consts.py
 *.db
+pa_weather_data.json
