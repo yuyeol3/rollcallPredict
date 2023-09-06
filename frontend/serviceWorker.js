@@ -33,8 +33,11 @@ self.addEventListener('install', event => {
   // Service Worker Fetch Event
   self.addEventListener('fetch', event => {
     event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request);
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request)
+        .then((response) => {
+          return response || fetch(event.request);
+        })
       })
     );
   });
