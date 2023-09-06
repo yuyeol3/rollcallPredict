@@ -8,7 +8,10 @@ self.addEventListener('install', event => {
           '/',
           '/static/js/index.js',
           '/static/css/index.css',
-          '/static/images/icon.ico'
+          '/static/images/icon.ico',
+          '/static/images/bell.png',
+          '/static/images/loading.png',
+          '/static/images/close.png'
           // Add more URLs to cache as needed
         ]);
       })
