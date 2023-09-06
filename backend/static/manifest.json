@@ -1,0 +1,17 @@
+{
+    "name": "내일점호",
+    "short_name": "점호",
+    "description": "날씨를 기반으로 내일 점호를 예측합니다.",
+    "start_url": "/",
+    "id" : "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+      {
+        "src": "/static/images/icon.ico",
+        "sizes": "256x256",
+        "type": "image/png"
+      }
+    ]
+  }
