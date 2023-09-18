@@ -1,10 +1,11 @@
 class WeatherUpdater {
     constructor() {
         this.weather = null;
-        setTimeout(
+        setInterval(
             ()=>{this.updateWeather()},
             1000 * 1800
         );
+
     }
 
     getData() {
