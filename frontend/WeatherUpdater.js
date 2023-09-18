@@ -1,10 +1,7 @@
 class WeatherUpdater {
     constructor() {
         this.weather = null;
-        setInterval(
-            ()=>{this.updateWeather()},
-            1000 * 1800
-        );
+        
 
     }
 

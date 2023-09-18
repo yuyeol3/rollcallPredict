@@ -511,6 +511,10 @@ class WeatherDisplayer extends HTMLElement
     constructor() {
         super();
         this.weatherUpdater = new WeatherUpdater();
+        setInterval(
+            ()=>{this.updateWeather()},
+            1000 * 1800
+        );
         this.styleElement = document.createElement("style");
         this.styleElement.innerHTML = `
 
@@ -584,10 +588,7 @@ module.exports = {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo}
 class WeatherUpdater {
     constructor() {
         this.weather = null;
-        setInterval(
-            ()=>{this.updateWeather()},
-            1000 * 1800
-        );
+        
 
     }
 

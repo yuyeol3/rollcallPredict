@@ -176,6 +176,10 @@ class WeatherDisplayer extends HTMLElement
     constructor() {
         super();
         this.weatherUpdater = new WeatherUpdater();
+        setInterval(
+            ()=>{this.updateWeather()},
+            1000 * 1800
+        );
         this.styleElement = document.createElement("style");
         this.styleElement.innerHTML = `
 
