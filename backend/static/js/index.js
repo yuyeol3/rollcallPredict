@@ -346,6 +346,7 @@ class WeatherSynop extends HTMLElement
         #weather-status-div {
             width : 90%;
             height : 200px;
+            margin: 0 auto;
             display : flex;
             flex-flow : row nowrap;
             justify-content : center;
