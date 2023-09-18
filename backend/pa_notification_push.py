@@ -33,7 +33,7 @@ class Pa_NotificationPushRoutine(NotificationPushRoutine):
                 try:
                     self.webpush.send(subscriber.convert_to_json(),
                                      "명일 아침점호는 "
-                                     f'{["실외", "실내"][rollcall_type]}'
+                                     f'{["야외", "실내"][rollcall_type]}'
                                      "점호입니다.")
 
                 except WebPushException:

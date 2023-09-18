@@ -4,6 +4,7 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
+    background-color: rgb(240, 240, 240);
 }
 
 weather-displayer {
@@ -22,5 +23,5 @@ top-bar {
     top: 0; left: 0;
     height: 50px;
     width: 100%;
-    border-bottom: 1px solid black;
+    background-color: white;
 }

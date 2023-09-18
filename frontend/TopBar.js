@@ -65,8 +65,10 @@ class TopBar extends HTMLElement
                 .setting-list-div button {
                     height: 40px;
                     width: 100px;
-                    background-color: white;
-                    border: 1px solid black;
+                    background-color: rgb(77, 165, 247);
+                    color : white;
+                    border : 0px;
+                    border-radius : 5px;
                 }
 
                 .setting-list-div p {
