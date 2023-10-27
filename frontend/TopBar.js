@@ -10,8 +10,8 @@ class TopBar extends HTMLElement
         #app-title {
             display: inline-block;
 
-            text-align: center;
-            margin: 15px auto;
+            text-align: left;
+            margin: 14px 20px;
             width: 100%;
             height: 20px;
         }
