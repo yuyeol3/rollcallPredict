@@ -99,7 +99,7 @@ class Modal extends HTMLElement {
         <button class="call-modal"></button>
         <dialog class="modal-dialog">
             <form class="modal-form" method="dialog">
-                <button class="close-button" value="close"><img src="./static/images/close.png"></button>
+                <button class="close-button" value="close" onclick="location.hash = ''"><img src="./static/images/close.png"></button>
             </form>
             <div class="content-div"></div>
         </dialog>
@@ -109,7 +109,14 @@ class Modal extends HTMLElement {
     }
 
     _setModalButton() {
-        this.querySelector(".call-modal").onclick = ()=> { this.querySelector(".modal-dialog").showModal(); }
+        this.querySelector(".call-modal").onclick = ()=> { 
+            if (this.getAttribute("href")) {
+                location.href = this.getAttribute("href");
+                return;
+            }
+
+            this.querySelector(".modal-dialog").showModal();
+        }
     }
 
     setButtonHTML(content) {
@@ -127,6 +134,10 @@ class Modal extends HTMLElement {
     getDialog() {
         return this.querySelector(".modal-dialog");   
     }
+
+    openModal() {
+        this.querySelector(".modal-dialog").showModal();
+    }     
 };
 
 
@@ -235,6 +246,28 @@ class NotiHandler {
 
 module.exports = {NotiHandler}
 },{}],4:[function(require,module,exports){
+const {routes} = require("./consts.js");
+
+const getRouteHtml = async () => {
+    const path = window.location.hash || window.location.pathname;
+    const route = routes[path] || routes[404];
+    route();
+
+//     const contents = document.getElementById("contents");
+//     contents.innerHTML = route();
+}
+
+const handleRoute = (event) => {
+    event = event || window.event;
+    event.preventDefault(); // anchor 태그의 기본동작인 링크 대상으로 이동하는 행동을 방지한다.
+    window.history.pushState({}, "", event.target.href); 
+    getRouteHtml();
+}
+
+
+
+module.exports = {getRouteHtml, handleRoute}
+},{"./consts.js":8}],5:[function(require,module,exports){
 const {noti_openkey} = require("./consts.js")
 const {NotiHandler} = require("./NotiHandler.js")
 
@@ -278,7 +311,7 @@ class TopBar extends HTMLElement
     connectedCallback() {
         this.innerHTML = `
             <div id="icons-div">
-                <modal-package id="noti-modal"></modal-package>
+                <modal-package id="noti-modal" href="./#noti-setting"></modal-package>
 
             </div>
             <h3 id="app-title">내일점호</h3>
@@ -332,7 +365,7 @@ class TopBar extends HTMLElement
 
 module.exports = {TopBar}
 
-},{"./NotiHandler.js":3,"./consts.js":7}],5:[function(require,module,exports){
+},{"./NotiHandler.js":3,"./consts.js":8}],6:[function(require,module,exports){
 const {image_dir} = require("./consts.js")
 const {WeatherUpdater} = require("./WeatherUpdater.js")
 
@@ -584,7 +617,7 @@ class WeatherDisplayer extends HTMLElement
 };
 
 module.exports = {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo}
-},{"./WeatherUpdater.js":6,"./consts.js":7}],6:[function(require,module,exports){
+},{"./WeatherUpdater.js":7,"./consts.js":8}],7:[function(require,module,exports){
 class WeatherUpdater {
     constructor() {
         this.weather = null;
@@ -616,7 +649,7 @@ class WeatherUpdater {
 }
 
 module.exports = {WeatherUpdater}
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 const image_dir = {
     "없음" : "./static/images/sun.png",
     "비" : "./static/images/rain.png",
@@ -626,13 +659,24 @@ const image_dir = {
 
 const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
 
-module.exports = {image_dir, noti_openkey}
-},{}],8:[function(require,module,exports){
+const {getPage404} = require("./pages/404.js");
+const {getPageHome} = require("./pages/home.js");
+
+const routes = {
+    404: getPage404,
+    "/": getPageHome,
+    "#noti-setting": () => { document.querySelector("#noti-modal").openModal(); }
+};
+
+module.exports = {image_dir, noti_openkey, routes}
+},{"./pages/404.js":10,"./pages/home.js":11}],9:[function(require,module,exports){
 const {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo} = require("./WeatherDisplayer.js");
 const {TopBar} = require("./TopBar.js");
 const {LoadingStatus} = require("./LodingStatus.js");
 const {Modal} = require("./Modal.js");
+const {getRouteHtml, handleRoute} = require("./RouteHandler.js");
 
+// customElement 정의
 customElements.define("weather-displayer", WeatherDisplayer);
 customElements.define("weather-synop", WeatherSynop);
 customElements.define("detailed-weather", DetailedWeatherInfo);
@@ -640,11 +684,18 @@ customElements.define("top-bar", TopBar);
 customElements.define("loading-stat", LoadingStatus);
 customElements.define("modal-package", Modal);
 
+
+
+
 // 마우스 우클릭 방지
 window.addEventListener("contextmenu", e => e.preventDefault());
 window.addEventListener("selectstart", e => e.preventDefault());
 
-if ('serviceWorker' in navigator) {
+
+window.addEventListener('DOMContentLoaded', function()
+{
+  // service worker 등록
+  if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register("./static/js/serviceWorker.js")
       .then(registration => {
         console.log('Service Worker registered with scope:', registration.scope);
@@ -652,6 +703,45 @@ if ('serviceWorker' in navigator) {
       .catch(error => {
         console.error('Service Worker registration failed:', error);
       });
+  }
+
+  // routing을 위한 정의
+  window.onpopstate = getRouteHtml;
+  getRouteHtml();
+
+});
+
+},{"./LodingStatus.js":1,"./Modal.js":2,"./RouteHandler.js":4,"./TopBar.js":5,"./WeatherDisplayer.js":6}],10:[function(require,module,exports){
+const getPage404 = () => {
+
+    document.getElementById("contents").innerHTML = `
+            <style>
+                #err-msg {
+                    height: 90vh;
+                    display : flex;
+                    flex-flow : column nowrap;
+                    justify-content : center;
+                    align-items : center;
+                }
+            </style>
+            <div id="err-msg">
+                <h1 style="text-align: center;">404 오류</h1>
+                <p style="text-align: center;">요청하신 페이지를 찾을 수 없습니다.</p>
+                <a href="./#">메인 화면으로</a>
+            </div>
+    `;
 }
-  
-},{"./LodingStatus.js":1,"./Modal.js":2,"./TopBar.js":4,"./WeatherDisplayer.js":5}]},{},[8]);
+
+module.exports = {getPage404}
+},{}],11:[function(require,module,exports){
+const getPageHome = () => {
+    document.getElementById("contents").innerHTML = `
+    <weather-displayer></weather-displayer>`;
+
+    document.querySelectorAll("dialog").forEach((e)=>{
+        e.close();
+    })
+}
+
+module.exports = {getPageHome}
+},{}]},{},[9]);

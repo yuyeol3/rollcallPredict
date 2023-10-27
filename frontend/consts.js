@@ -7,4 +7,13 @@ const image_dir = {
 
 const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
 
-module.exports = {image_dir, noti_openkey}
+const {getPage404} = require("./pages/404.js");
+const {getPageHome} = require("./pages/home.js");
+
+const routes = {
+    404: getPage404,
+    "/": getPageHome,
+    "#noti-setting": () => { document.querySelector("#noti-modal").openModal(); }
+};
+
+module.exports = {image_dir, noti_openkey, routes}

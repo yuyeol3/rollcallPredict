@@ -38,7 +38,7 @@ class Modal extends HTMLElement {
         <button class="call-modal"></button>
         <dialog class="modal-dialog">
             <form class="modal-form" method="dialog">
-                <button class="close-button" value="close"><img src="./static/images/close.png"></button>
+                <button class="close-button" value="close" onclick="location.hash = ''"><img src="./static/images/close.png"></button>
             </form>
             <div class="content-div"></div>
         </dialog>
@@ -48,7 +48,14 @@ class Modal extends HTMLElement {
     }
 
     _setModalButton() {
-        this.querySelector(".call-modal").onclick = ()=> { this.querySelector(".modal-dialog").showModal(); }
+        this.querySelector(".call-modal").onclick = ()=> { 
+            if (this.getAttribute("href")) {
+                location.href = this.getAttribute("href");
+                return;
+            }
+
+            this.querySelector(".modal-dialog").showModal();
+        }
     }
 
     setButtonHTML(content) {
@@ -66,6 +73,10 @@ class Modal extends HTMLElement {
     getDialog() {
         return this.querySelector(".modal-dialog");   
     }
+
+    openModal() {
+        this.querySelector(".modal-dialog").showModal();
+    }     
 };
 
 
