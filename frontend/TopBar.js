@@ -41,7 +41,7 @@ class TopBar extends HTMLElement
     connectedCallback() {
         this.innerHTML = `
             <div id="icons-div">
-                <modal-package id="noti-modal" href="./#noti-setting"></modal-package>
+                <modal-package id="noti-modal"></modal-package>
 
             </div>
             <h3 id="app-title">내일점호</h3>

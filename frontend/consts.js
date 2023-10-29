@@ -12,8 +12,7 @@ const {getPageHome} = require("./pages/home.js");
 
 const routes = {
     404: getPage404,
-    "/": getPageHome,
-    "#noti-setting": () => { document.querySelector("#noti-modal").openModal(); }
+    "/": getPageHome
 };
 
 module.exports = {image_dir, noti_openkey, routes}

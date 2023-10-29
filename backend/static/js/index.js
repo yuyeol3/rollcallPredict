@@ -99,7 +99,7 @@ class Modal extends HTMLElement {
         <button class="call-modal"></button>
         <dialog class="modal-dialog">
             <form class="modal-form" method="dialog">
-                <button class="close-button" value="close" onclick="location.hash = ''"><img src="./static/images/close.png"></button>
+                <button class="close-button" value="close"><img src="./static/images/close.png"></button>
             </form>
             <div class="content-div"></div>
         </dialog>
@@ -311,7 +311,7 @@ class TopBar extends HTMLElement
     connectedCallback() {
         this.innerHTML = `
             <div id="icons-div">
-                <modal-package id="noti-modal" href="./#noti-setting"></modal-package>
+                <modal-package id="noti-modal"></modal-package>
 
             </div>
             <h3 id="app-title">내일점호</h3>
@@ -664,8 +664,7 @@ const {getPageHome} = require("./pages/home.js");
 
 const routes = {
     404: getPage404,
-    "/": getPageHome,
-    "#noti-setting": () => { document.querySelector("#noti-modal").openModal(); }
+    "/": getPageHome
 };
 
 module.exports = {image_dir, noti_openkey, routes}

@@ -38,7 +38,7 @@ class Modal extends HTMLElement {
         <button class="call-modal"></button>
         <dialog class="modal-dialog">
             <form class="modal-form" method="dialog">
-                <button class="close-button" value="close" onclick="location.hash = ''"><img src="./static/images/close.png"></button>
+                <button class="close-button" value="close"><img src="./static/images/close.png"></button>
             </form>
             <div class="content-div"></div>
         </dialog>
