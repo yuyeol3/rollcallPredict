@@ -1,0 +1,27 @@
+body {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: rgb(240, 240, 240);
+}
+
+weather-displayer {
+    display: block;
+    position: fixed;
+    top: 50px; left: 0;
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow-y: scroll;
+
+}
+
+top-bar {
+    display: block;
+    position: fixed;
+    top: 0; left: 0;
+    height: 50px;
+    width: 100%;
+    background-color: white;
+}

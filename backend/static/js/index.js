@@ -683,9 +683,6 @@ customElements.define("top-bar", TopBar);
 customElements.define("loading-stat", LoadingStatus);
 customElements.define("modal-package", Modal);
 
-
-
-
 // 마우스 우클릭 방지
 window.addEventListener("contextmenu", e => e.preventDefault());
 window.addEventListener("selectstart", e => e.preventDefault());
