@@ -1,5 +1,5 @@
-const {image_dir} = require("./consts.js")
-const {WeatherUpdater} = require("./WeatherUpdater.js")
+const {image_dir} = require("../consts.js")
+const {WeatherUpdater} = require("../modules/WeatherUpdater.js")
 
 class WeatherSynop extends HTMLElement
 {
@@ -204,6 +204,12 @@ class WeatherDisplayer extends HTMLElement
 
         #detailed-info-div {
             padding: 10px;
+        }
+
+        @media (min-width : 1024px) {
+            .background-box {
+                width: 80%;
+            }
         }
 
         `;

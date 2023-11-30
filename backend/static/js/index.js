@@ -1,4 +1,65 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+
+class BottomBar extends HTMLElement
+{
+    constructor()
+    {
+        super();
+        this.styleElement = document.createElement("style");
+        this.styleElement.innerHTML = `
+            #buttons-div {
+                height: 100%;
+                display: flex;
+                flex-direction : row;
+                justify-content : space-around;
+                align-items : center;
+            }
+
+            .bottombtn {
+                height: 100%;
+                background-color: transparent;
+                border: 0px;
+            }
+
+            @media (min-width : 1024px) {
+                #buttons-div {
+
+                    flex-direction : column;
+
+                }
+            }
+        `;
+
+    }
+
+    connectedCallback()
+    {
+        this.innerHTML = `
+        <div id="buttons-div">
+            <button class="bottombtn" id="home-btn" title="home">
+                <img src="/static/images/home.svg" alt="home">
+            </button>
+            <button class="bottombtn" id="info-btn" title="about">
+                <img src="/static/images/info.svg" alt="about">
+            </button>
+        </div>
+        `;
+        this.prepend(this.styleElement);
+        this.querySelector("#home-btn").onclick = () => {
+            if (location.hash != "")
+                location.href = "/#"
+        };
+        this.querySelector("#info-btn").onclick = () => {
+            if (location.hash != "#about")
+                location.href = "/#about"
+        };
+    }
+
+
+};
+
+module.exports = {BottomBar};
+},{}],2:[function(require,module,exports){
 /**
  * 로딩 상태를 보여주는 customElement
  */
@@ -58,7 +119,7 @@ class LoadingStatus extends HTMLElement
 }
 
 module.exports = {LoadingStatus}
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 class Modal extends HTMLElement {
     constructor() {
         super();
@@ -89,7 +150,14 @@ class Modal extends HTMLElement {
                 clear : right;
                 margin : 10px 0;
             }
-
+            
+            @media (min-width: 1024px)
+            {
+                .modal-dialog {
+                    width: 50vw;
+                    border-radius: calc(50vw * 0.02);
+                }
+            }
 
         `;
     }
@@ -144,132 +212,9 @@ class Modal extends HTMLElement {
 
 
 module.exports = {Modal}
-},{}],3:[function(require,module,exports){
-/**
- * noti 등록/수신을 위한 컨트롤 클레스.
- */
-class NotiHandler {
-    constructor(openKey, targetButton) {
-        this.openKey = openKey;
-        this.targetButton = targetButton;
-    }
-
-    async registSubscription() {
-        let permAllowance = await this._checkPermission();
-
-        if (permAllowance) {
-            this._sendSupscriptionReq();
-        }
-    }
-
-    async _checkPermission() {
-        if ('Notification' in window) {
-            try {
-                let permission = await Notification.requestPermission();
-                if (permission === "granted") {
-                    return true;
-                }
-
-            } catch(error) {
-                console.error('Error requesting notification permission:', error);
-            } 
-        }
-        
-        return false;
-
-        // if ('Notification' in window) {
-        //     Notification.requestPermission()
-        //       .then((permission) => {
-        //         if (permission === 'granted') {
-        //           // User has granted permission
-        //           // Subscribe for push notifications
-        //           this._sendSupscriptionReq();
-        //         } else {
-        //           // User has denied permission
-        //           console.log('Push notification permission denied.');
-        //         }
-        //       })
-        //       .catch((error) => {
-        //         console.error('Error requesting notification permission:', error);
-        //       });
-        //   }
-          
-    }
-
-    _sendSupscriptionReq() {
-
-        navigator.serviceWorker.register("./static/js/serviceWorker.js")
-            .then((registration) => {
-
-            registration.pushManager.getSubscription().then((subscription) => {
-                if (subscription) {
-                    console.log("구독이 이미 있습니다.");
-                    this._showSubscriptionSucceed();
-                    // this.saveOnDB(subscription);
-                } else {
-                    registration.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: this.openKey
-                    })
-                    .then((subscription) => {
-                        this.saveOnDB(subscription);
-                    })
-                }
-            })
-
-        })
-    }
-
-    async saveOnDB(subscription) {
-        console.log("inside SaveOnDB(subscription)");
-        const res = await fetch("./regist_subscription", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(subscription)
-        })
-
-        const data = await res.json();
-
-        if (data.registration_result) {
-            this._showSubscriptionSucceed();
-        }
-
-        return data;
-    }
-
-    _showSubscriptionSucceed() {
-        this.targetButton.innerText = "구독완료✔️"
-    }
-};
-
-module.exports = {NotiHandler}
 },{}],4:[function(require,module,exports){
-const {routes} = require("./consts.js");
-
-const getRouteHtml = async () => {
-    const path = window.location.hash || window.location.pathname;
-    const route = routes[path] || routes[404];
-    route();
-
-//     const contents = document.getElementById("contents");
-//     contents.innerHTML = route();
-}
-
-const handleRoute = (event) => {
-    event = event || window.event;
-    event.preventDefault(); // anchor 태그의 기본동작인 링크 대상으로 이동하는 행동을 방지한다.
-    window.history.pushState({}, "", event.target.href); 
-    getRouteHtml();
-}
-
-
-
-module.exports = {getRouteHtml, handleRoute}
-},{"./consts.js":8}],5:[function(require,module,exports){
-const {noti_openkey} = require("./consts.js")
-const {NotiHandler} = require("./NotiHandler.js")
+const {noti_openkey} = require("../consts.js")
+const {NotiHandler} = require("../modules/NotiHandler.js")
 
 class TopBar extends HTMLElement
 {
@@ -365,9 +310,9 @@ class TopBar extends HTMLElement
 
 module.exports = {TopBar}
 
-},{"./NotiHandler.js":3,"./consts.js":8}],6:[function(require,module,exports){
-const {image_dir} = require("./consts.js")
-const {WeatherUpdater} = require("./WeatherUpdater.js")
+},{"../consts.js":6,"../modules/NotiHandler.js":8}],5:[function(require,module,exports){
+const {image_dir} = require("../consts.js")
+const {WeatherUpdater} = require("../modules/WeatherUpdater.js")
 
 class WeatherSynop extends HTMLElement
 {
@@ -574,6 +519,12 @@ class WeatherDisplayer extends HTMLElement
             padding: 10px;
         }
 
+        @media (min-width : 1024px) {
+            .background-box {
+                width: 80%;
+            }
+        }
+
         `;
     }
 
@@ -617,7 +568,189 @@ class WeatherDisplayer extends HTMLElement
 };
 
 module.exports = {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo}
-},{"./WeatherUpdater.js":7,"./consts.js":8}],7:[function(require,module,exports){
+},{"../consts.js":6,"../modules/WeatherUpdater.js":10}],6:[function(require,module,exports){
+const image_dir = {
+    "없음" : "./static/images/sun.png",
+    "비" : "./static/images/rain.png",
+    "비/눈" : "./static/images/sleet.png",
+    "눈" : "./static/images/snow.png"
+};
+
+const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
+
+const pages = require("./pages/pages.js");
+const routes = {
+    404: pages.getPage404,
+    "/": pages.getPageHome,
+    "#about": pages.getPageAbout
+};
+
+module.exports = {image_dir, noti_openkey, routes}
+},{"./pages/pages.js":14}],7:[function(require,module,exports){
+const {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo} = require("./components/WeatherDisplayer.js");
+const {TopBar} = require("./components/TopBar.js");
+const {BottomBar} = require("./components/BottomBar.js");
+const {LoadingStatus} = require("./components/LodingStatus.js");
+const {Modal} = require("./components/Modal.js");
+const {getRouteHtml, handleRoute} = require("./modules/RouteHandler.js");
+
+// customElement 정의
+customElements.define("weather-displayer", WeatherDisplayer);
+customElements.define("weather-synop", WeatherSynop);
+customElements.define("detailed-weather", DetailedWeatherInfo);
+customElements.define("top-bar", TopBar);
+customElements.define("bottom-bar", BottomBar);
+customElements.define("loading-stat", LoadingStatus);
+customElements.define("modal-package", Modal);
+
+// 마우스 우클릭 방지
+window.addEventListener("contextmenu", e => e.preventDefault());
+window.addEventListener("selectstart", e => e.preventDefault());
+
+
+window.addEventListener('DOMContentLoaded', function()
+{
+  // service worker 등록
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register("./static/js/serviceWorker.js")
+      .then(registration => {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch(error => {
+        console.error('Service Worker registration failed:', error);
+      });
+  }
+
+  // routing을 위한 정의
+  window.onpopstate = getRouteHtml;
+  getRouteHtml();
+
+});
+
+},{"./components/BottomBar.js":1,"./components/LodingStatus.js":2,"./components/Modal.js":3,"./components/TopBar.js":4,"./components/WeatherDisplayer.js":5,"./modules/RouteHandler.js":9}],8:[function(require,module,exports){
+/**
+ * noti 등록/수신을 위한 컨트롤 클레스.
+ */
+class NotiHandler {
+    constructor(openKey, targetButton) {
+        this.openKey = openKey;
+        this.targetButton = targetButton;
+    }
+
+    async registSubscription() {
+        let permAllowance = await this._checkPermission();
+
+        if (permAllowance) {
+            this._sendSupscriptionReq();
+        }
+    }
+
+    async _checkPermission() {
+        if ('Notification' in window) {
+            try {
+                let permission = await Notification.requestPermission();
+                if (permission === "granted") {
+                    return true;
+                }
+
+            } catch(error) {
+                console.error('Error requesting notification permission:', error);
+            } 
+        }
+        
+        return false;
+
+        // if ('Notification' in window) {
+        //     Notification.requestPermission()
+        //       .then((permission) => {
+        //         if (permission === 'granted') {
+        //           // User has granted permission
+        //           // Subscribe for push notifications
+        //           this._sendSupscriptionReq();
+        //         } else {
+        //           // User has denied permission
+        //           console.log('Push notification permission denied.');
+        //         }
+        //       })
+        //       .catch((error) => {
+        //         console.error('Error requesting notification permission:', error);
+        //       });
+        //   }
+          
+    }
+
+    _sendSupscriptionReq() {
+
+        navigator.serviceWorker.register("./static/js/serviceWorker.js")
+            .then((registration) => {
+
+            registration.pushManager.getSubscription().then((subscription) => {
+                if (subscription) {
+                    console.log("구독이 이미 있습니다.");
+                    this._showSubscriptionSucceed();
+                    // this.saveOnDB(subscription);
+                } else {
+                    registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: this.openKey
+                    })
+                    .then((subscription) => {
+                        this.saveOnDB(subscription);
+                    })
+                }
+            })
+
+        })
+    }
+
+    async saveOnDB(subscription) {
+        console.log("inside SaveOnDB(subscription)");
+        const res = await fetch("./regist_subscription", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(subscription)
+        })
+
+        const data = await res.json();
+
+        if (data.registration_result) {
+            this._showSubscriptionSucceed();
+        }
+
+        return data;
+    }
+
+    _showSubscriptionSucceed() {
+        this.targetButton.innerText = "구독완료✔️"
+    }
+};
+
+module.exports = {NotiHandler}
+},{}],9:[function(require,module,exports){
+const {routes} = require("../consts.js");
+
+const getRouteHtml = async () => {
+    const path = window.location.hash || window.location.pathname;
+    const route = routes[path] || routes[404];
+    route();
+
+//     const contents = document.getElementById("contents");
+//     contents.innerHTML = route();
+}
+
+const handleRoute = (event) => {
+    event = event || window.event;
+    event.preventDefault(); // anchor 태그의 기본동작인 링크 대상으로 이동하는 행동을 방지한다.
+    window.history.pushState({}, "", event.target.href); 
+    getRouteHtml();
+}
+
+
+
+module.exports = {getRouteHtml, handleRoute}
+},{"../consts.js":6}],10:[function(require,module,exports){
 class WeatherUpdater {
     constructor() {
         this.weather = null;
@@ -649,65 +782,7 @@ class WeatherUpdater {
 }
 
 module.exports = {WeatherUpdater}
-},{}],8:[function(require,module,exports){
-const image_dir = {
-    "없음" : "./static/images/sun.png",
-    "비" : "./static/images/rain.png",
-    "비/눈" : "./static/images/sleet.png",
-    "눈" : "./static/images/snow.png"
-};
-
-const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
-
-const {getPage404} = require("./pages/404.js");
-const {getPageHome} = require("./pages/home.js");
-
-const routes = {
-    404: getPage404,
-    "/": getPageHome
-};
-
-module.exports = {image_dir, noti_openkey, routes}
-},{"./pages/404.js":10,"./pages/home.js":11}],9:[function(require,module,exports){
-const {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo} = require("./WeatherDisplayer.js");
-const {TopBar} = require("./TopBar.js");
-const {LoadingStatus} = require("./LodingStatus.js");
-const {Modal} = require("./Modal.js");
-const {getRouteHtml, handleRoute} = require("./RouteHandler.js");
-
-// customElement 정의
-customElements.define("weather-displayer", WeatherDisplayer);
-customElements.define("weather-synop", WeatherSynop);
-customElements.define("detailed-weather", DetailedWeatherInfo);
-customElements.define("top-bar", TopBar);
-customElements.define("loading-stat", LoadingStatus);
-customElements.define("modal-package", Modal);
-
-// 마우스 우클릭 방지
-window.addEventListener("contextmenu", e => e.preventDefault());
-window.addEventListener("selectstart", e => e.preventDefault());
-
-
-window.addEventListener('DOMContentLoaded', function()
-{
-  // service worker 등록
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register("./static/js/serviceWorker.js")
-      .then(registration => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch(error => {
-        console.error('Service Worker registration failed:', error);
-      });
-  }
-
-  // routing을 위한 정의
-  window.onpopstate = getRouteHtml;
-  getRouteHtml();
-
-});
-
-},{"./LodingStatus.js":1,"./Modal.js":2,"./RouteHandler.js":4,"./TopBar.js":5,"./WeatherDisplayer.js":6}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 const getPage404 = () => {
 
     document.getElementById("contents").innerHTML = `
@@ -729,10 +804,31 @@ const getPage404 = () => {
 }
 
 module.exports = {getPage404}
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+const getPageAbout = () => {
+
+    document.getElementById("contents").innerHTML = `
+        <style>
+            #about-div {
+                text-align: center;
+                background-color: white;
+            }
+        </style>    
+        <div id="about-div" class="main-content">
+            <h1 id="header-text">내일점호</h1>
+
+        </div>
+    `
+
+};
+
+module.exports = {getPageAbout};
+},{}],13:[function(require,module,exports){
 const getPageHome = () => {
     document.getElementById("contents").innerHTML = `
-    <weather-displayer></weather-displayer>`;
+    <style>
+    </style>
+    <weather-displayer class="main-content"></weather-displayer>`;
 
     document.querySelectorAll("dialog").forEach((e)=>{
         e.close();
@@ -740,4 +836,10 @@ const getPageHome = () => {
 }
 
 module.exports = {getPageHome}
-},{}]},{},[9]);
+},{}],14:[function(require,module,exports){
+const {getPage404} = require("./404.js");
+const {getPageHome} = require("./home.js");
+const {getPageAbout} = require("./about.js");
+
+module.exports = {getPage404, getPageHome, getPageAbout};
+},{"./404.js":11,"./about.js":12,"./home.js":13}]},{},[7]);

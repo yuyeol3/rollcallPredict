@@ -1,5 +1,5 @@
 const {paths} = require("./paths.js");
-const exec = require('child_process').exec;
+const exec = require('child_process').execSync;
 const ncp = require('./node_modules/ncp').ncp; 
 const fs = require("fs");
 
@@ -61,6 +61,7 @@ const bundleJs = () => {
 
 const main = ()=> {
     try {
+        let start = Date.now();
         updateDir("./html/", paths.html);
         updateDir("./css/", paths.css);
         updateDir("./images/", paths.images);
@@ -68,7 +69,7 @@ const main = ()=> {
         copyDir("./manifest.json", paths.manifest);
         bundleJs();
 
-        console.log('successfully packed');
+        console.log(`Successfully Packed in ${(Date.now()-start)/1000}s`);
     }
     catch (err) {
         console.error(err);

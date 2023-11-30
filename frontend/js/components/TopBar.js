@@ -1,5 +1,5 @@
-const {noti_openkey} = require("./consts.js")
-const {NotiHandler} = require("./NotiHandler.js")
+const {noti_openkey} = require("../consts.js")
+const {NotiHandler} = require("../modules/NotiHandler.js")
 
 class TopBar extends HTMLElement
 {

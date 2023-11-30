@@ -1,4 +1,4 @@
-const {routes} = require("./consts.js");
+const {routes} = require("../consts.js");
 
 const getRouteHtml = async () => {
     const path = window.location.hash || window.location.pathname;

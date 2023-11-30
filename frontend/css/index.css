@@ -7,15 +7,7 @@ body {
     background-color: rgb(240, 240, 240);
 }
 
-weather-displayer {
-    display: block;
-    position: fixed;
-    top: 50px; left: 0;
-    width: 100%;
-    height: calc(100% - 50px);
-    overflow-y: scroll;
 
-}
 
 top-bar {
     display: block;
@@ -24,4 +16,40 @@ top-bar {
     height: 50px;
     width: 100%;
     background-color: white;
+}
+
+bottom-bar {
+    display: block;
+    position: fixed;
+    bottom: 0; left : 0;
+    height: 50px;
+    width: 100%;
+    background-color: white;
+}
+
+.main-content {
+    display: block;
+    position: fixed;
+    top: 50px; left: 0;
+    width: 100%;
+    height: calc(100% - 100px);
+    overflow-y: scroll;
+
+}
+
+@media (min-width: 1024px)
+{
+    bottom-bar {
+        height: calc(100% - 50px);
+        width: 50px;
+        top: 50px;
+    }
+
+    .main-content {
+        top: 50px;
+        left: 50px;
+        height: calc(100% - 50px);
+        width: calc(100% - 50px);
+        /* padding-bottom: 100px; */
+    }
 }

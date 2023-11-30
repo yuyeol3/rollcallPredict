@@ -7,12 +7,11 @@ const image_dir = {
 
 const noti_openkey = "BObE1QWyIKsrHwzu4PfAee-J6zG44TMuyjLzZveQbKOZJkdrBDbARqnJBaua0ji74TowUqWHPp9IwckRdfYUxkk";
 
-const {getPage404} = require("./pages/404.js");
-const {getPageHome} = require("./pages/home.js");
-
+const pages = require("./pages/pages.js");
 const routes = {
-    404: getPage404,
-    "/": getPageHome
+    404: pages.getPage404,
+    "/": pages.getPageHome,
+    "#about": pages.getPageAbout
 };
 
 module.exports = {image_dir, noti_openkey, routes}

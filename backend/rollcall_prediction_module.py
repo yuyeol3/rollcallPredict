@@ -97,4 +97,6 @@ class RollCallPredictor:
      
 
 if __name__ == "__main__":
-    print(RollCallPredictor("20230619", "1700", "20230620").predict())
+    predictor = RollCallPredictor("20231129", "1100", "20231130")
+    predictor.predict()
+    print(predictor.parsed_weather.calc_wind_chill())

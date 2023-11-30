@@ -1,14 +1,16 @@
-const {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo} = require("./WeatherDisplayer.js");
-const {TopBar} = require("./TopBar.js");
-const {LoadingStatus} = require("./LodingStatus.js");
-const {Modal} = require("./Modal.js");
-const {getRouteHtml, handleRoute} = require("./RouteHandler.js");
+const {WeatherDisplayer, WeatherSynop, DetailedWeatherInfo} = require("./components/WeatherDisplayer.js");
+const {TopBar} = require("./components/TopBar.js");
+const {BottomBar} = require("./components/BottomBar.js");
+const {LoadingStatus} = require("./components/LodingStatus.js");
+const {Modal} = require("./components/Modal.js");
+const {getRouteHtml, handleRoute} = require("./modules/RouteHandler.js");
 
 // customElement 정의
 customElements.define("weather-displayer", WeatherDisplayer);
 customElements.define("weather-synop", WeatherSynop);
 customElements.define("detailed-weather", DetailedWeatherInfo);
 customElements.define("top-bar", TopBar);
+customElements.define("bottom-bar", BottomBar);
 customElements.define("loading-stat", LoadingStatus);
 customElements.define("modal-package", Modal);
 

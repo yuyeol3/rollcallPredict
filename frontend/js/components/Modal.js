@@ -28,7 +28,14 @@ class Modal extends HTMLElement {
                 clear : right;
                 margin : 10px 0;
             }
-
+            
+            @media (min-width: 1024px)
+            {
+                .modal-dialog {
+                    width: 50vw;
+                    border-radius: calc(50vw * 0.02);
+                }
+            }
 
         `;
     }

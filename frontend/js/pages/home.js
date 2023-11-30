@@ -1,6 +1,8 @@
 const getPageHome = () => {
     document.getElementById("contents").innerHTML = `
-    <weather-displayer></weather-displayer>`;
+    <style>
+    </style>
+    <weather-displayer class="main-content"></weather-displayer>`;
 
     document.querySelectorAll("dialog").forEach((e)=>{
         e.close();
